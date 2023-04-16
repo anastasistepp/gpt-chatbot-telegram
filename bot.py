@@ -40,11 +40,10 @@ async def chat(update, context: ContextTypes.DEFAULT_TYPE):
                 {"role": "user", "content": message}]
         '''
 
-        state = response.choices[0].state
-        response_text = response.choices[0].text
+        #response_text = response.choices[0].text
 
         print(response["model"], response["usage"])
-        #response_text = response["choices"][0]["message"]["content"]
+        response_text = response["choices"][0]["message"]["content"]
 
         await context.bot.send_message(chat_id=update.effective_chat.id, text=response_text)
 
