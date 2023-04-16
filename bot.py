@@ -6,6 +6,8 @@ import openai
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 import os
 
+state = ""
+
 # Set up ChatGPT API client
 openai.api_key = os.environ['TOKEN_AI']
 async def start(update, context: ContextTypes.DEFAULT_TYPE):
@@ -14,13 +16,23 @@ async def start(update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def chat(update, context: ContextTypes.DEFAULT_TYPE):
+    global state
     # Check if message is not None
     try:
         # if update.message and update.message.text:
         # Get user's message
         message = update.message.text
         # Send message to ChatGPT API
-        response = openai.ChatCompletion.create(model = "gpt-3.5-turbo", messages= [{"role": "user", "content": message}])
+        response = openai.ChatCompletion.create(model = "gpt-3.5-turbo",
+                                                prompt = message,
+                                                temperature=0.5,
+                                                max_tokens=100,
+                                                n=1,
+                                                stop=None,
+                                                frequency_penalty=0,
+                                                presence_penalty=0,
+                                                state=state
+                                                )
         '''
             model= "text-davinci-003",
             prompt=message,
@@ -34,11 +46,13 @@ async def chat(update, context: ContextTypes.DEFAULT_TYPE):
             messages=[
                 {"role": "user", "content": message}]
         '''
-        print(response["model"], response["usage"])
-        # Get response from ChatGPT API
-        response_text = response["choices"][0]["message"]["content"]
 
-        # Send response to user
+        state = response.choices[0].state
+        response_text = response.choices[0].text
+
+        print(response["model"], response["usage"])
+        #response_text = response["choices"][0]["message"]["content"]
+
         await context.bot.send_message(chat_id=update.effective_chat.id, text=response_text)
 
     except Exception as e:
