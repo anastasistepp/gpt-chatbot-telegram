@@ -41,7 +41,7 @@ async def chat(update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_chat.id, text=response_text)
 
     except Exception as e:
-        print(e)
+        print("Error chat GPT:", e)
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                text="Error")
 
