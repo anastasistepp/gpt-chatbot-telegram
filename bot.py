@@ -24,7 +24,6 @@ async def chat(update, context: ContextTypes.DEFAULT_TYPE):
         message = update.message.text
         # Send message to ChatGPT API
         response = openai.ChatCompletion.create(model = "gpt-3.5-turbo",
-                                                state=state,
                                                 messages=[{"role": "user", "content": message}]
                                                 )
         '''
