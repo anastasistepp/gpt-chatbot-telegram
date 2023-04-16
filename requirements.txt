@@ -1,3 +1,2 @@
-logging
 openai
 python-telegram-bot
