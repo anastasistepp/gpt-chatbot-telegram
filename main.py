@@ -3,7 +3,7 @@
 
 import openai
 import logging
-from config import TOKEN_BOT, TOKEN_AI
+#from config import TOKEN_BOT, TOKEN_AI
 
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
