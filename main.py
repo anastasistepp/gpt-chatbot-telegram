@@ -2,15 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import openai
-import logging
 #from config import TOKEN_BOT, TOKEN_AI
-
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
 
 # Set up ChatGPT API client
 openai.api_key = TOKEN_AI
