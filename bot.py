@@ -5,14 +5,14 @@ import openai
 #from config import TOKEN_BOT, TOKEN_AI
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 import os
+import json
 
-state = ""
+DB_JSON = "db_message.json"
 
 # Set up ChatGPT API client
 openai.api_key = os.environ['TOKEN_AI']
 async def start(update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="Hello!")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Напишите первый вопрос:")
 
 
 async def chat(update, context: ContextTypes.DEFAULT_TYPE):
@@ -22,28 +22,38 @@ async def chat(update, context: ContextTypes.DEFAULT_TYPE):
         # if update.message and update.message.text:
         # Get user's message
         message = update.message.text
-        # Send message to ChatGPT API
-        response = openai.ChatCompletion.create(model = "gpt-3.5-turbo",
-                                                messages=[{"role": "user", "content": message}]
-                                                )
-        '''
-            model= "text-davinci-003",
-            prompt=message,
-            max_tokens=500,
-            temperature=0.3
-        '''
+        if os.path.isfile(DB_JSON):
+            with open(DB_JSON, 'r') as f:
+                data = json.load(f)
+        else:
+            data = {}
+        chat_id = str(update.message.chat_id)
+        print(1, chat_id,data.keys())
 
-        '''
-        
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "user", "content": message}]
-        '''
+        if chat_id in data:
+            history_message = data[chat_id] + [{"role": "user", "content": message}]
+        else:
+            history_message = [{"role": "user", "content": message}]
 
-        #response_text = response.choices[0].text
+        while True:
+            len_m = 0
+            for d in history_message:
+                len_m += len(d["content"])
+            if len_m < 4096:
+                break
+            history_message = history_message[1:]
+
+        response = openai.ChatCompletion.create(model = "gpt-3.5-turbo", messages=history_message)
+
+        response_text = response["choices"][0]["message"]["content"]
+        data[chat_id] = history_message + [{"role": "assistant", "content": response_text}]
+
+        print(2, chat_id,data.keys())
 
         print(response["model"], response["usage"])
-        response_text = response["choices"][0]["message"]["content"]
+
+        with open(DB_JSON, 'w') as f:
+            json.dump(data, f)
 
         await context.bot.send_message(chat_id=update.effective_chat.id, text=response_text)
 
