@@ -28,7 +28,6 @@ async def chat(update, context: ContextTypes.DEFAULT_TYPE):
         else:
             data = {}
         chat_id = str(update.message.chat_id)
-        print(1, chat_id,data.keys())
 
         if chat_id in data:
             history_message = data[chat_id] + [{"role": "user", "content": message}]
@@ -48,9 +47,9 @@ async def chat(update, context: ContextTypes.DEFAULT_TYPE):
         response_text = response["choices"][0]["message"]["content"]
         data[chat_id] = history_message + [{"role": "assistant", "content": response_text}]
 
-        print(2, chat_id,data.keys())
 
-        print(response["model"], response["usage"])
+
+        print(response["model"], response["usage"], data.keys())
 
         with open(DB_JSON, 'w') as f:
             json.dump(data, f)
