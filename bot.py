@@ -34,7 +34,7 @@ async def chat(update, context: ContextTypes.DEFAULT_TYPE):
             messages=[
                 {"role": "user", "content": message}]
         '''
-        print(response)
+        print(response["model"], response["usage"])
         # Get response from ChatGPT API
         response_text = response["choices"][0]["message"]["content"]
 
