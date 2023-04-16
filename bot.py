@@ -4,9 +4,10 @@
 import openai
 #from config import TOKEN_BOT, TOKEN_AI
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
+import os
 
 # Set up ChatGPT API client
-openai.api_key = TOKEN_AI
+openai.api_key = os.environ['TOKEN_AI']
 async def start(update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text="Hello!")
@@ -46,7 +47,7 @@ async def chat(update, context: ContextTypes.DEFAULT_TYPE):
                                text="Error")
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token(TOKEN_BOT).build()
+    application = ApplicationBuilder().token(os.environ['TOKEN_BOT']).build()
 
     start_handler = CommandHandler('start', start)
     chat_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), chat)
